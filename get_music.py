@@ -15,10 +15,11 @@ async def get_your_music(artist: str, song: str):
         rev_res = res_song.results[0]
         rev_res2 = rev_res.streams.filter(adaptive=True).filter(only_audio=True)
         best_quality = rev_res2.order_by('abr')[-1]
-        print(best_quality.title)
-        print(f"This is the file's name:{artist}_{song}")
+        # print(best_quality.title)
+        # print(f"This is the file's name:{artist}_{song}")
         best_quality.download(filename=f"{artist}_{song}")
     else: print('This song is downloaded already')
+
 
 
 
