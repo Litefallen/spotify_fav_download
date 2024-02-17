@@ -13,7 +13,7 @@ import uvicorn
 
 music_list = []
 
-
+# Function to create the 'Music' folder if it doesn't exist and set it as the current working directory
 def folder_mk():
     cur_dir = os.getcwd()
     if not path.split(cur_dir)[1] == 'Music':
@@ -21,7 +21,7 @@ def folder_mk():
             os.mkdir('Music')
     os.chdir("Music")
 
-
+# Async function to retrieve favorite songs from Spotify and populate the global `music_list`
 async def get_fav_songs(at, client, offset):
     track_resp = await client.get('https://api.spotify.com/v1/me/tracks',
                                   headers={'Authorization': f'Bearer {at['access_token']}'},
@@ -34,6 +34,7 @@ async def get_fav_songs(at, client, offset):
         music_list.append((artist, track))
 
 
+# Hide sensitive data 
 dotenv.load_dotenv()
 client_id = os.environ.get('CLIENT_ID')
 client_secret = os.environ.get('CLIENT_SECRET')
@@ -55,6 +56,7 @@ async def gett(code=Query):
     req = httpx.post('https://accounts.spotify.com/api/token', headers=headers, data=data)
     at = req.json()
     folder_mk()
+    # get songs from favorite list
     track_resp = httpx.get('https://api.spotify.com/v1/me/tracks',
                            headers={'Authorization': f'Bearer {at['access_token']}'},
                            params={'limit': '50', 'offset': 0}).json()
@@ -75,6 +77,7 @@ async def gett(code=Query):
 
 
 if __name__ == "__main__":
+    # Open a web browser to initiate the Spotify authorization process
     webbrowser.open(
         f'https://accounts.spotify.com/authorize?response_type=code&client_id={client_id}&redirect_uri=http://127.0.0.1:8000/callback/&scope=user-library-read&show_dialog=True')
     uvicorn.run("main:api", host="127.0.0.1", port=8000, log_level=None)
